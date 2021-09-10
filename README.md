@@ -34,3 +34,7 @@ services:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
 ```
+
+---
+
+Version management of this repository done by [releaser](https://github.com/muratgozel/node-releaser) 🚀

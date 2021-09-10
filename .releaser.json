@@ -1,0 +1,9 @@
+{
+  "versioning": {
+    "scheme": "semver"
+  },
+  "github": {
+    "enable": true,
+    "release": true
+  }
+}
