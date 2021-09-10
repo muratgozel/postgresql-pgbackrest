@@ -9,9 +9,6 @@
   "docker": {
     "enable": true,
     "user": "muratgozel",
-    "repo": "postgresql-pgbackrest",
-    "build": {
-      "path": "."
-    }
+    "repo": "postgresql-pgbackrest"
   }
 }
