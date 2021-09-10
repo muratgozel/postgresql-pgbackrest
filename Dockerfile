@@ -1,11 +1,15 @@
 FROM alpine:3.13
 
+LABEL org.opencontainers.image.source="https://github.com/muratgozel/postgresql-pgbackrest"
+LABEL org.opencontainers.image.title="PostgreSQL pgBackRest"
+LABEL org.opencontainers.image.description="PostgreSQL server with pgBackRest backup/restore tool."
+
 ENV PGVERSION=13.3
 ENV PGPORT=5432
 ENV PGUSER=postgres
 ENV PGDATA=/usr/local/pgsql/data
 ENV PG_BACKREST_VERSION=2.35
-ENV LANG en_US.utf8
+ENV LANG=en_US.utf8
 
 COPY ./entrypoint.sh /entrypoint.sh
 
