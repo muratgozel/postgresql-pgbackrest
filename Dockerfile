@@ -9,6 +9,8 @@ ENV PGPORT=5432
 ENV PGUSER=postgres
 ENV PGDATA=/usr/local/pgsql/data
 ENV PG_BACKREST_VERSION=2.35
+ENV PGUSER_UID=2001
+ENV PGUSER_GID=2001
 ENV LANG=en_US.utf8
 
 COPY ./entrypoint.sh /entrypoint.sh
@@ -23,7 +25,8 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     # configure dependencies
     ln -sf python3 /usr/bin/python && \
     mkdir -p /downloads && \
-    adduser -D -s /bin/bash $PGUSER && \
+    addgroup --gid ${PGUSER_GID} $PGUSER && \
+    adduser --disabled-password --uid ${PGUSER_UID} --ingroup $PGUSER --gecos "" -s /bin/bash $PGUSER && \
     # download pgbackrest
     cd /downloads && \
     wget https://github.com/pgbackrest/pgbackrest/archive/release/$PG_BACKREST_VERSION.tar.gz && \
