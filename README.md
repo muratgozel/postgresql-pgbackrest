@@ -34,6 +34,10 @@ services:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
 ```
+If you want store pgbackrest backups on the host machine add a volume:
+```yml
+- 'pgbackrest_data:/var/lib/pgbackrest'
+```
 
 ---
 
