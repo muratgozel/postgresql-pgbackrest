@@ -35,9 +35,9 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     rm -r /downloads/pgbackrest-release-$PG_BACKREST_VERSION && \
     # configure pgbackrest
     chmod 755 /usr/bin/pgbackrest && \
-    mkdir -p -m 775 /var/log/pgbackrest && chown $PGUSER:$PGUSER /var/log/pgbackrest && \
-    mkdir -p -m 775 /var/lib/pgbackrest && chown $PGUSER:$PGUSER /var/lib/pgbackrest && \
-    mkdir -p -m 750 /var/spool/pgbackrest && chown $PGUSER:$PGUSER /var/spool/pgbackrest && \
+    mkdir -p -m 750 /var/log/pgbackrest && chown -R $PGUSER:$PGUSER /var/log/pgbackrest && \
+    mkdir -p -m 750 /var/lib/pgbackrest && chown -R $PGUSER:$PGUSER /var/lib/pgbackrest && \
+    mkdir -p -m 750 /var/spool/pgbackrest && chown -R $PGUSER:$PGUSER /var/spool/pgbackrest && \
     # download postgresql
     cd /downloads && \
     wget https://ftp.postgresql.org/pub/source/v$PGVERSION/postgresql-$PGVERSION.tar.gz && \

@@ -3,11 +3,6 @@
 pgconf="$PGDATA/postgresql.conf"
 hbaconf="$PGDATA/pg_hba.conf"
 
-if [[ ! -d "/var/lib/pgbackrest" ]]; then
-  mkdir -p -m 750 /var/lib/pgbackrest
-  chown $PGUSER:$PGUSER /var/lib/pgbackrest
-fi
-
 # create db cluster if it's not exist
 if [[ ! -f $PGDATA/PG_VERSION ]]; then
   initdb --encoding=UTF8 --locale=C -D $PGDATA
