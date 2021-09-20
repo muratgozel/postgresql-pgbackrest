@@ -58,7 +58,7 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     chmod +x /entrypoint.sh && \
     apk del --no-network .build-deps
 
-USER $PGUSER
+#USER $PGUSER
 
 STOPSIGNAL SIGINT
 
