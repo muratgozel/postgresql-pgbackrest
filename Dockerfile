@@ -4,6 +4,7 @@ LABEL org.opencontainers.image.source="https://github.com/muratgozel/postgresql-
 LABEL org.opencontainers.image.title="PostgreSQL pgBackRest"
 LABEL org.opencontainers.image.description="PostgreSQL server with pgBackRest backup/restore tool."
 
+ENV LANG=en_US.utf8
 ENV PGVERSION=13.3
 ENV PGPORT=5432
 ENV PGUSER=postgres
@@ -11,7 +12,6 @@ ENV PGDATA=/usr/local/pgsql/data
 ENV PG_BACKREST_VERSION=2.35
 ENV PGUSER_UID=2001
 ENV PGUSER_GID=2001
-ENV LANG=en_US.utf8
 
 COPY ./entrypoint.sh /entrypoint.sh
 
@@ -21,12 +21,12 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     bzip2-dev zlib-dev libuuid linux-headers \
     tzdata yaml-dev util-linux-dev && \
     apk add --no-cache git bash python3 py3-pip icu libxml2 lz4-dev zstd-dev \
-    postgresql-dev && \
+    postgresql-dev shadow && \
     # configure dependencies
     ln -sf python3 /usr/bin/python && \
     mkdir -p /downloads && \
-    addgroup --gid ${PGUSER_GID} $PGUSER && \
-    adduser --disabled-password --uid ${PGUSER_UID} --ingroup $PGUSER --gecos "" -s /bin/bash $PGUSER && \
+    addgroup --gid $PGUSER_GID $PGUSER && \
+    adduser --disabled-password --uid $PGUSER_UID --ingroup $PGUSER --gecos "" -s /bin/bash $PGUSER && \
     # download pgbackrest
     cd /downloads && \
     wget https://github.com/pgbackrest/pgbackrest/archive/release/$PG_BACKREST_VERSION.tar.gz && \
