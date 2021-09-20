@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-sudo usermod -u $PGUSER_UID $PGUSER
-sudo groupmod -g $PGUSER_GID $PGUSER
-
 pgconf="$PGDATA/postgresql.conf"
 hbaconf="$PGDATA/pg_hba.conf"
 
 # create db cluster if it's not exist
 if [[ ! -f $PGDATA/PG_VERSION ]]; then
-  initdb --encoding=UTF8 --locale=C -D $PGDATA
+  su-exec $PGUSER initdb --encoding=UTF8 --locale=C -D $PGDATA
 
   echo "listen_addresses = '*'" >> $pgconf
   echo "port = $PGPORT" >> $pgconf
@@ -21,7 +18,7 @@ fi
 
 # init pgbackrest
 if ! grep -q "pgbackrest" "$pgconf"; then
-  pg_ctl start -o "-p $PGPORT -k /var/run/postgresql" -D $PGDATA
+  su-exec $PGUSER pg_ctl start -o "-p $PGPORT -k /var/run/postgresql" -D $PGDATA
 
   echo "wal_level = replica" >> $pgconf
   echo "max_wal_size = 1GB" >> $pgconf
@@ -32,10 +29,10 @@ if ! grep -q "pgbackrest" "$pgconf"; then
   echo "log_line_prefix = ''" >> $pgconf
   echo "log_timezone = 'Etc/UTC'" >> $pgconf
 
-  pgbackrest --stanza=app --pg1-port=$PGPORT --log-level-console=info stanza-create
-  pg_ctl restart -o "-p $PGPORT -k /var/run/postgresql" -D $PGDATA
+  su-exec $PGUSER pgbackrest --stanza=app --pg1-port=$PGPORT --log-level-console=info stanza-create
+  su-exec $PGUSER pg_ctl restart -o "-p $PGPORT -k /var/run/postgresql" -D $PGDATA
 
-  pgbackrest --stanza=app --pg1-port=$PGPORT --log-level-console=info check
+  su-exec $PGUSER pgbackrest --stanza=app --pg1-port=$PGPORT --log-level-console=info check
   pgbackrest_check_result=$?
 
   if [ $pgbackrest_check_result -ne 0 ]; then
@@ -43,8 +40,8 @@ if ! grep -q "pgbackrest" "$pgconf"; then
     exit $pgbackrest_check_result
   fi
 
-  pg_ctl stop -o "-p $PGPORT -k /var/run/postgresql" -D $PGDATA
+  su-exec $PGUSER pg_ctl stop -o "-p $PGPORT -k /var/run/postgresql" -D $PGDATA
 fi
 
 # start postgresql server
-exec "$@"
+su-exec $PGUSER "$@"

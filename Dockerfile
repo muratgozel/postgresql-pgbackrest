@@ -10,10 +10,13 @@ ENV PGPORT=5432
 ENV PGUSER=postgres
 ENV PGDATA=/usr/local/pgsql/data
 ENV PG_BACKREST_VERSION=2.35
-ENV PGUSER_UID=2001
-ENV PGUSER_GID=2001
+ENV PGUSER_UID=70
+ENV PGUSER_GID=70
 
 COPY ./entrypoint.sh /entrypoint.sh
+
+RUN addgroup --gid $PGUSER_GID $PGUSER && \
+    adduser --disabled-password --uid $PGUSER_UID --ingroup $PGUSER --gecos "" -s /bin/bash $PGUSER
 
 # install dependencies
 RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev pcre-dev \
@@ -21,12 +24,10 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     bzip2-dev zlib-dev libuuid linux-headers \
     tzdata yaml-dev util-linux-dev && \
     apk add --no-cache git bash python3 py3-pip icu libxml2 lz4-dev zstd-dev \
-    postgresql-dev shadow && \
+    postgresql-dev shadow su-exec && \
     # configure dependencies
     ln -sf python3 /usr/bin/python && \
     mkdir -p /downloads && \
-    addgroup --gid $PGUSER_GID $PGUSER && \
-    adduser --disabled-password --uid $PGUSER_UID --ingroup $PGUSER --gecos "" -s /bin/bash $PGUSER && \
     # download pgbackrest
     cd /downloads && \
     wget https://github.com/pgbackrest/pgbackrest/archive/release/$PG_BACKREST_VERSION.tar.gz && \
@@ -36,11 +37,6 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     cd /downloads/pgbackrest-release-$PG_BACKREST_VERSION/src && \
     ./configure && make && cp pgbackrest /usr/bin/ && \
     rm -r /downloads/pgbackrest-release-$PG_BACKREST_VERSION && \
-    # configure pgbackrest
-    chmod 755 /usr/bin/pgbackrest && \
-    mkdir -p -m 750 /var/log/pgbackrest && chown -R $PGUSER:$PGUSER /var/log/pgbackrest && \
-    mkdir -p -m 750 /var/lib/pgbackrest && chown -R $PGUSER:$PGUSER /var/lib/pgbackrest && \
-    mkdir -p -m 750 /var/spool/pgbackrest && chown -R $PGUSER:$PGUSER /var/spool/pgbackrest && \
     # download postgresql
     cd /downloads && \
     wget https://ftp.postgresql.org/pub/source/v$PGVERSION/postgresql-$PGVERSION.tar.gz && \
@@ -53,12 +49,16 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     rm -r /downloads/postgresql-$PGVERSION && \
     # configure postgresql
     cd / && \
-    mkdir -p -m 775 /var/run/postgresql && chown $PGUSER:$PGUSER /var/run/postgresql && \
-    mkdir -p -m 750 $PGDATA && chown $PGUSER:$PGUSER $PGDATA && \
     chmod +x /entrypoint.sh && \
     apk del --no-network .build-deps
 
-#USER $PGUSER
+# configure file and folder permissions
+RUN chmod 755 /usr/bin/pgbackrest && \
+    mkdir -p /var/log/pgbackrest && chown -R $PGUSER:$PGUSER /var/log/pgbackrest && chmod 750 /var/log/pgbackrest && \
+    mkdir -p /var/lib/pgbackrest && chown -R $PGUSER:$PGUSER /var/lib/pgbackrest && chmod 750 /var/lib/pgbackrest && \
+    mkdir -p /var/spool/pgbackrest && chown -R $PGUSER:$PGUSER /var/spool/pgbackrest && chmod 750 /var/spool/pgbackrest && \
+    mkdir -p /var/run/postgresql && chown -R $PGUSER:$PGUSER /var/run/postgresql && chmod 775 /var/run/postgresql && \
+    mkdir -p $PGDATA && chown -R $PGUSER:$PGUSER $PGDATA && chmod 750 $PGDATA
 
 STOPSIGNAL SIGINT
 
