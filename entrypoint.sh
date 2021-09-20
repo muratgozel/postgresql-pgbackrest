@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-usermod -u $PGUSER_UID $PGUSER
-groupmod -g $PGUSER_GID $PGUSER
+sudo usermod -u $PGUSER_UID $PGUSER
+sudo groupmod -g $PGUSER_GID $PGUSER
 
 pgconf="$PGDATA/postgresql.conf"
 hbaconf="$PGDATA/pg_hba.conf"
