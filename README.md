@@ -19,7 +19,7 @@ volumes:
 services:
   postgresql:
     container_name: postgres01
-    image: muratgozel/postgresql-pgbackrest:latest
+    image: ghcr.io/muratgozel/postgresql-pgbackrest:latest
     build:
       context: ./postgresql
     ports:
