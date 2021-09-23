@@ -4,7 +4,7 @@ A docker file that installs postgresql along with pgbackrest. Image size is ~340
 ## Usage
 A pgbackrest.conf file is required as you can find a sample of it inside the pgbackrest directory. Refer to the [pgbackrest documentation](https://pgbackrest.org/configuration.html) for configuration options.
 
-This is a docker image and available on docker hub. Just pull it. Sample docker-compose file:
+This is a docker image and available on Github Packages. Just pull it. Sample docker-compose file:
 ```yaml
 version: "3.9"
 
