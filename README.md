@@ -39,6 +39,11 @@ If you want store pgbackrest backups on the host machine add a volume:
 - 'pgbackrest_data:/var/lib/pgbackrest'
 ```
 
+Create a volume under data directory and execute some sql scripts inside of it.
+```sh
+docker exec postgres01 su-exec postgres psql -h 127.0.0.1 -U postgres -d [DBNAME] -f /data/schema.sql
+```
+
 ---
 
 Version management of this repository done by [releaser](https://github.com/muratgozel/node-releaser) 🚀
