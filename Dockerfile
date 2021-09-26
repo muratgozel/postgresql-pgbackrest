@@ -24,7 +24,7 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     bzip2-dev zlib-dev libuuid linux-headers \
     tzdata yaml-dev util-linux-dev && \
     apk add --no-cache git bash python3 py3-pip icu libxml2 lz4-dev zstd-dev \
-    postgresql-dev shadow su-exec && \
+    postgresql-dev shadow && \
     # configure dependencies
     ln -sf python3 /usr/bin/python && \
     mkdir -p /downloads && \
@@ -61,6 +61,8 @@ RUN chmod 755 /usr/bin/pgbackrest && \
     mkdir -p $PGDATA && chown -R $PGUSER:$PGUSER $PGDATA && chmod 750 $PGDATA
 
 STOPSIGNAL SIGINT
+
+USER $PGUSER
 
 # start database service
 ENV PATH=/usr/local/pgsql/bin:$PATH
