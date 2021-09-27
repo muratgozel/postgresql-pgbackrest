@@ -24,7 +24,7 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     bzip2-dev zlib-dev libuuid linux-headers \
     tzdata yaml-dev util-linux-dev && \
     apk add --no-cache git bash python3 py3-pip icu libxml2 lz4-dev zstd-dev \
-    postgresql-dev shadow && \
+    postgresql-dev shadow su-exec && \
     # configure dependencies
     ln -sf python3 /usr/bin/python && \
     mkdir -p /downloads && \
@@ -53,16 +53,14 @@ RUN apk add --no-cache --virtual .build-deps gcc g++ make wget pkgconf dpkg-dev 
     apk del --no-network .build-deps
 
 # configure file and folder permissions
-RUN chmod 755 /usr/bin/pgbackrest && \
-    mkdir -p /var/log/pgbackrest && chown -R $PGUSER:$PGUSER /var/log/pgbackrest && chmod 750 /var/log/pgbackrest && \
-    mkdir -p /var/lib/pgbackrest && chown -R $PGUSER:$PGUSER /var/lib/pgbackrest && chmod 750 /var/lib/pgbackrest && \
-    mkdir -p /var/spool/pgbackrest && chown -R $PGUSER:$PGUSER /var/spool/pgbackrest && chmod 750 /var/spool/pgbackrest && \
-    mkdir -p /var/run/postgresql && chown -R $PGUSER:$PGUSER /var/run/postgresql && chmod 775 /var/run/postgresql && \
-    mkdir -p $PGDATA && chown -R $PGUSER:$PGUSER $PGDATA && chmod 750 $PGDATA
+RUN chmod -R 755 /usr/bin/pgbackrest && \
+    mkdir -p /var/log/pgbackrest && chown -R $PGUSER:$PGUSER /var/log/pgbackrest && chmod -R 750 /var/log/pgbackrest && \
+    mkdir -p /var/lib/pgbackrest && chown -R $PGUSER:$PGUSER /var/lib/pgbackrest && chmod -R 750 /var/lib/pgbackrest && \
+    mkdir -p /var/spool/pgbackrest && chown -R $PGUSER:$PGUSER /var/spool/pgbackrest && chmod -R 750 /var/spool/pgbackrest && \
+    mkdir -p /var/run/postgresql && chown -R $PGUSER:$PGUSER /var/run/postgresql && chmod -R 775 /var/run/postgresql && \
+    mkdir -p $PGDATA && chown -R $PGUSER:$PGUSER $PGDATA && chmod -R 750 $PGDATA
 
 STOPSIGNAL SIGINT
-
-USER $PGUSER
 
 # start database service
 ENV PATH=/usr/local/pgsql/bin:$PATH
